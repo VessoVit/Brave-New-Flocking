@@ -29,28 +29,43 @@ class testApp : public ofBaseApp{
 		
 	ofxLeapMotion leap;
     
+// Settings
+    bool fullscreen = true;
+
+//  Custom Methods
     
-    // Custom Methods
-//    void exit();
-    
-    // Variables
+//  Variables
     ofPoint acc;
+    ofImage texture;
+
     
-    
-    // 3D
+//  3D
     ofSpherePrimitive sphere;
     ofLight pointLight;
     ofMaterial material;
     
-    // Views
+// Views
     float eyeX, eyeY, eyeZ;
     float centerX, centerY;
     bool setCenter = false;
     
-    // Camera
+// Camera
     ofEasyCam cam;
+    ofNode lookat;
+
     
-    //Flocking
+//  #LeapMotion Controller
+    
+//Hands variables
+    vector <ofxLeapMotionSimpleHand> simpleHands;
+    vector <int> fingersFound;
+    vector <ofVect3f> fingerPos;
+    vector <ofVect3f> spherePos;
+    vector <float> SphereSize;
+    
+    map <int, ofPolyline> fingerTrails;
+    
+//Flocking
     Boid boid;
     vector<Boid*> boids;
     Flocking flock;

@@ -1,6 +1,8 @@
 //
 //  Boid.h
 //
+//  The class for each individual boid behaviour and the individual rules of the flock.
+//
 //  Defines Boid behaviour:
 //  - application of the Flocking Rules,
 //  - steering,
@@ -16,7 +18,8 @@
 
 #include "ofMain.h"
 
-
+// Different modes of behaviour
+// [TODO]:
 enum boidsMode{
     BOIDS_MODE_ATTRACT = 0,
     BOIDS_MODE_REPEL,
@@ -59,10 +62,9 @@ public:
     //
     ofSpherePrimitive sphere;
     ofLight pointLight;
-    //Interaction
-//    ofEvent<ofVec3f> clickableEvent;
-//    static ofEvent<ofVec3f> clicableEvent;
-    
+//      Interaction
+//          ofEvent<ofVec3f> clickableEvent;
+//          static ofEvent<ofVec3f> clicableEvent;
     ofPoint targetLoc;
     void setTarget(ofPoint target);
 

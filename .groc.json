@@ -1,0 +1,4 @@
+{
+    "glob": ["src/*.cpp", "README.md"],
+    "github": false
+}

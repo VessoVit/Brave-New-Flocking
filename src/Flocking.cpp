@@ -2,7 +2,7 @@
 //  Flocking.cpp
 //
 //  Applies functions to all the boids
-//
+//  The data structure for the flock.
 //
 
 
