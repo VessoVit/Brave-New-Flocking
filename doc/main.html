@@ -1,0 +1,13 @@
+<!DOCTYPE html><html lang="en"><head><title>main</title></head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0"><meta name="groc-relative-root" content=""><meta name="groc-document-path" content="main"><meta name="groc-project-path" content="src/main.cpp"><link rel="stylesheet" type="text/css" media="all" href="assets/style.css"><script type="text/javascript" src="assets/behavior.js"></script><body><div id="meta"><div class="file-path">src/main.cpp</div></div><div id="document"><div class="segment"><div class="code"><div class="wrapper"><span class="hljs-preprocessor">#include "ofMain.h"</span>
+<span class="hljs-preprocessor">#include "testApp.h"</span>
+<span class="hljs-preprocessor">#include "ofAppGlutWindow.h"</span>
+
+<span class="hljs-comment">//========================================================================</span>
+<span class="hljs-keyword">int</span> main( ){
+
+    ofAppGlutWindow window;
+	ofSetupOpenGL(&amp;window, <span class="hljs-number">1240</span>, <span class="hljs-number">1028</span>, OF_WINDOW);			<span class="hljs-comment">// &lt;-------- setup the GL context</span></div></div></div><div class="segment"><div class="comments "><div class="wrapper"><p>this kicks off the running of my app
+can be OF_WINDOW or OF_FULLSCREEN
+pass in width and height too:</p></div></div><div class="code"><div class="wrapper">	ofRunApp( <span class="hljs-keyword">new</span> testApp());
+
+}</div></div></div></div></body></html>

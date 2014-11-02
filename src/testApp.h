@@ -6,8 +6,10 @@
 //Custom classes
 #include "Boids.h"
 #include "Flocking.h"
-//#include "Ctrl.h"
 
+#define kNumTestNodes 4
+#define kNumCameras 2
+#define kNumLights 3
 
 class testApp : public ofBaseApp{
 
@@ -26,13 +28,13 @@ class testApp : public ofBaseApp{
     void dragEvent(ofDragInfo dragInfo);
     void gotMessage(ofMessage msg);
     void exit();
-		
+//  Custom Methods
+    void resetCam();
 	ofxLeapMotion leap;
     
 // Settings
     bool fullscreen = true;
 
-//  Custom Methods
     
 //  Variables
     ofPoint acc;
@@ -50,18 +52,31 @@ class testApp : public ofBaseApp{
     bool setCenter = false;
     
 // Camera
+//  1. EasyCam
     ofEasyCam cam;
     ofNode lookat;
-
+//  2. ofCamera
+    ofNode testNodes[kNumTestNodes];
+    ofLight light[kNumLights];
+    ofCamera camMain[kNumCameras];
+//  which test node to lookat
+//  one for each camera
+    int lookatIndex[kNumCameras];
+// which test node to link parent to
+    int parentIndex[kNumCameras];
+// whether camera is in mouseOrbit mode or not
+    bool doMouseOrbit[kNumCameras];
+    float orbitRadius;
+//  which camera index are we looking through
+    int camToView;
+//  which camera index we are configuring
+    int camToConfig;
     
 //  #LeapMotion Controller
-    
+
 //Hands variables
     vector <ofxLeapMotionSimpleHand> simpleHands;
     vector <int> fingersFound;
-    vector <ofVect3f> fingerPos;
-    vector <ofVect3f> spherePos;
-    vector <float> SphereSize;
     
     map <int, ofPolyline> fingerTrails;
     

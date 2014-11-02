@@ -25,17 +25,36 @@ void testApp::setup(){
         flock.addBoid();
     }
     
+//    ### EasyCam Setup
 //  setup camera (look at)
 //    cam.setPosition(ofPoint(ofGetWidth()/2, ofGetHeight()/2, -650));
 //    lookat.setPosition(ofPoint(ofGetWidth()/2, ofGetHeight()/2, 0));
 //    cam.disableMouseInput();
-    cam.setOrientation(ofPoint(-20, 0, 0));
-    cam.setDistance(5);
-
+//    cam.setOrientation(ofPoint(-20, 0, 0));
+//    cam.setDistance(5);
+//    -----------------------
+    
 // [TODO]: EVENTS:
 // --------- Listeners ------
 //    ofAddListener(boid.clickableEvent, this, &ofApp::onEventClicked);
 
+//    ### ofCamera
+
+    ofEnableDepthTest();
+    ofSetVerticalSync(true);
+    ofEnableLighting();
+    
+    for(int i = 0; i < kNumLights; i++){
+        light[i].enable();
+    }
+    
+    resetCam();
+    
+    for (int i = 0; i < kNumTestNodes; i++) {
+        if(i>0) testNodes[i].setParent(testNodes[i-1]);
+    }
+//    -----------------------
+//    ### LEAP MOTION
 // we enable our gesture detection here
 	leap.open();
 	leap.setupGestures();
@@ -47,10 +66,37 @@ void testApp::update()
 {
     flock.update();
     pointLight.setPosition((ofGetWidth()*.5)+ cos(ofGetElapsedTimef()*.5)*(ofGetWidth()*.3), ofGetHeight()/2, 500);
-//update Camera
-    cam.setPosition(ofPoint(ofGetWidth()/2, ofGetHeight()/2, -650));
-    lookat.setPosition(ofPoint(ofGetWidth()/2, ofGetHeight()/2, 0));
-    cam.lookAt(lookat);
+//update easyCam
+//    cam.setPosition(ofPoint(ofGetWidth()/2, ofGetHeight()/2, -650));
+//    lookat.setPosition(ofPoint(ofGetWidth()/2, ofGetHeight()/2, 0));
+//    cam.lookAt(lookat);
+    
+//    ### ofCamera
+//(ofGetWidth()/2, ofGetHeight()/2, 0
+//    testNodes[i].setPosition
+//    for (int i = 0; i < kNumTestNodes; i++) {
+        testNodes[0].setPosition(ofVec3f(ofGetWidth()/2,ofGetHeight()/2, 250));
+        testNodes[0].setOrientation(ofVec3f(ofGetWidth(),ofGetHeight(), 650));
+        testNodes[0].setScale(1);
+//        Second Node
+        testNodes[1].setPosition(ofVec3f(ofGetWidth(),ofGetHeight()*4, -650));
+        testNodes[1].setOrientation(ofVec3f(ofGetWidth(),ofGetHeight(), 650));
+        testNodes[1].setScale(1);
+//  Third Node
+        testNodes[2].setPosition(ofVec3f(ofGetWidth(),ofGetHeight()*2, -650));
+        testNodes[2].setOrientation(ofVec3f(ofGetWidth(),ofGetHeight(), 0));
+        testNodes[2].setScale(1);
+//    Last Node
+        testNodes[3].setPosition(ofVec3f(ofGetWidth()*2,ofGetHeight()*2, 0));
+        testNodes[3].setOrientation(ofVec3f(ofGetWidth(),ofGetHeight(), 650));
+        testNodes[3].setScale(1);
+//    }
+    
+//    testNodes[0].setPosition(ofVec3f(ofGetWidth()*2), ofGetHeight()*2, 650));
+//    testNodes[0].setOrientation();
+//    testNodes[0].setScale();
+    //
+//    
 //update leap hand
     fingersFound.clear();
     
@@ -59,9 +105,9 @@ void testApp::update()
     vector <Hand> hands = leap.getLeapHands();
     if(leap.isFrameNew() && hands.size() ){
         //return the data in mm and mapping it to our world space.
-        leap.setMappingX(-230, 230, -ofGetWidth()/2, ofGetWidth()/2);
-        leap.setMappingY(90, 490, -ofGetHeight()/2, ofGetHeight()/2);
-        leap.setMappingZ(-150, 150, -200, 200);
+        leap.setMappingX(-230, 230, ofGetWidth()/2, ofGetWidth());
+        leap.setMappingY(90, 490, ofGetHeight()/2, ofGetHeight());
+        leap.setMappingZ(-150, 150, 0, 650);
         
         for (int i = 0; i < hands.size(); i++) {
             for (int j = 0; j < hands[i].fingers().count(); j++) {
@@ -86,9 +132,13 @@ void testApp::update()
 
 //--------------------------------------------------------------
 void testApp::draw(){
-
-    cam.begin();
     
+    for (int i = 0; i < kNumCameras; i++) {
+        if (lookatIndex[i] >= 0) camMain[i].lookAt(testNodes[lookatIndex[i]]);
+    }
+
+    camMain[camToView].begin();
+        ofDrawAxis(100);
         ofEnableDepthTest();
         ofEnableLighting();
         pointLight.enable();
@@ -99,7 +149,37 @@ void testApp::draw(){
         ofDrawSphere(ofGetWidth()/2, ofGetHeight()/2, ofGetWidth()*2);
 //  Call the flocking
         flock.draw();
+    
+    
 
+// draw testNodes
+    for(int i=0; i<kNumTestNodes; i++) {
+        ofSetColor(255, 128, 255);
+        testNodes[i].draw();
+    }
+    
+// draw cameras
+    for(int i=0; i<kNumCameras; i++) {
+        ofSetColor(255, 255, 0);
+        camMain[i].draw();
+        
+        // draw line from cam to its lookat
+        if(lookatIndex[i] >= 0) {
+            ofSetColor(0, 255, 255);
+            ofVec3f v1 = camMain[i].getGlobalPosition();
+            ofVec3f v2 = testNodes[lookatIndex[i]].getGlobalPosition();
+            ofLine(v1,v2);
+        }
+        
+        // draw line from cam to its parent
+        if(parentIndex[i] >= 0) {
+            ofSetColor(255, 255, 0);
+            ofVec3f v1 = camMain[i].getGlobalPosition();
+            ofVec3f v2 = testNodes[parentIndex[i]].getGlobalPosition();
+            ofLine(v1,v2);
+        }
+    }
+    
 // Centrel object Sphere
         ofSpherePrimitive deathStar;
         deathStar.setPosition(ofGetWidth()/2, ofGetHeight()/2, 0);
@@ -126,13 +206,15 @@ void testApp::draw(){
 //          // Do something with it
 //      }
 
-    cam.end();
-    
+    camMain[camToView].end();
+    for(int i = 0; i < simpleHands.size(); i++){
+        simpleHands[i].debugDraw();
+    }
 //    ### Debug Screen Output
-    string distanceString;
-    distanceString = "Distance: "+ofToString(cam.getDistance());
-    ofDrawBitmapString(distanceString, 20, 40);
-    
+//    string distanceString;
+//    distanceString = "Distance: "+ofToString(cam.getDistance());
+//    ofDrawBitmapString(distanceString, 20, 40);
+//    
    
     
 //  ###Leap iGesture Key
@@ -150,7 +232,8 @@ void testApp::draw(){
 // --------------------------------
     
     string msg;
-    
+    ofNode *n = &camMain[camToConfig];
+
     switch (leap.iGestures) {
         case 1:
             msg = "Screen Tap";
@@ -160,6 +243,9 @@ void testApp::draw(){
         case 2:
             msg = "Key Tap";
             msg += "\nPosition: " + ofToString(leap.keyTapPosition);
+
+            boid.setTarget(leap.keyTapPosition);
+            deathStar.setPosition(leap.keyTapPosition);
             break;
             
         case 3:
@@ -196,11 +282,28 @@ void testApp::draw(){
         case 9:
             msg = "Circle Left";
             msg += "\nCircle Radius: " + ofToString(leap.circleRadius) + "\nCircle Center: "+ofToString(leap.circleCenter);
+
+//            if(ofGetElapsedTimeMillis() - startedGesture >= 5000)
+//            {
+//                lookatIndex[camToConfig]--;
+//                if(lookatIndex[camToConfig]<=-1){
+//                    lookatIndex[camToConfig] = 3;
+//                }
+//            }
+//
+            
             break;
             
         case 10:
             msg = "Circle Right";
             msg += "\nCircle Radius: " + ofToString(leap.circleRadius) + "\nCircle Center: "+ofToString(leap.circleCenter);
+            
+            if (ofGetFrameNum()%60 == 0) {
+                lookatIndex[camToConfig] = lookatIndex[camToConfig]+1;
+                if(lookatIndex[camToConfig]>=kNumTestNodes){
+                    lookatIndex[camToConfig] = -1;
+                }
+            }
             break;
             
         default:
@@ -212,10 +315,54 @@ void testApp::draw(){
 }
 
 //  --------------------------------------------------------------
+
+void testApp::resetCam(){
+    camToView = 0;
+    camToConfig = 1;
+    
+    orbitRadius = 200;
+    
+    for(int i = 0; i < kNumCameras; i++){
+        camMain[i].resetTransform();
+        camMain[i].setFov(60);
+        camMain[i].clearParent();
+//        Don't look at any node
+        lookatIndex[i] = -1;
+//        Don't parent any node
+        parentIndex[i] = -1;
+        doMouseOrbit[i] = false;
+    }
+    
+    camMain[0].setPosition(40,40,190);
+    doMouseOrbit[0] = true;
+    
+    camMain[1].setPosition(80, 40, 30);
+//    Look at smallest node
+    lookatIndex[1] = kNumTestNodes-1;
+}
+
+//  --------------------------------------------------------------
 void testApp::keyPressed(int key){
-    if( key == 'f' ) {
-        fullscreen = !fullscreen;
-        ofSetFullscreen(fullscreen);
+    ofNode *n = &camMain[camToConfig];
+    switch (key) {
+        case 'f':
+            fullscreen = !fullscreen;
+            ofSetFullscreen(fullscreen);
+            break;
+        case 't':
+            lookatIndex[camToConfig]++;
+            if(lookatIndex[camToConfig]>=kNumTestNodes){
+                lookatIndex[camToConfig] = -1;
+            }
+            break;
+        case 'v':
+            camToView = 1 - camToView;
+            break;
+        case 'r':
+            resetCam();
+            break;
+        default:
+            break;
     }
 }
 

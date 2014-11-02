@@ -31,16 +31,7 @@ Boid::Boid() {
     maxspeed = 4;
     maxforce = 0.1;
     
-//  ---------------------------------
-// ###Event
-//  ---------------------------------
-//
-//
-//    if(!bRegisteredEvents){
-//          ofRegisterMouseEvents(this);
-//          bRegisteredEvents = true;
-//      }
-//
+
 }
 
 //----------------------------------------------
@@ -76,7 +67,6 @@ void Boid::update(vector<Boid*> boids) {
 //----------------------------------------------
 
 void Boid::setTarget(ofPoint target){
-    //[TODO]
     acc += steer(target, false);
 }
 
@@ -128,21 +118,7 @@ ofPoint Boid::steer(ofPoint target, bool slowdown) {
 //  ----------------------------------------------
 
 void Boid::draw() {
-//  Draw a triangle rotated in the direction of velocity
-//
-//    
-//      float angle = (float)atan2(-vel.y, vel.x);
-//      float theta =  -1.0*angle;
-//      float heading2D = ofRadToDeg(theta)+90;
-//      ofEnableAlphaBlending();
-//      ofSetColor(255);
-//      ofPushStyle();
-//      ofFill();
-//
-//      ofSetColor(50,boid_bright, boid_sat, 5);
-//
-//      boid_bright = ofMap(loc.x,0,ofGetWidth(), 200,0);
-//      boid_sat = ofMap(loc.y,0,ofGetHeight(), 200,0);
+
     
 //----------------------------------------------
 //  Target (TEST)
@@ -151,9 +127,15 @@ void Boid::draw() {
 //      ofPoint target(ofGetWidth()/2, ofGetHeight()/2, ofGetHeight()/2);
 //
     ofPoint target(ofRandomWidth(), ofRandomHeight(), ofRandomHeight());
+    ofConePrimitive targetCone;
+    targetCone.setRadius(5);
+    targetCone.setHeight(7);
+    targetCone.setPosition(target);
+    targetCone.setScale(10);
+    
     acc += steer(target, false);
     
-    //3D
+    //3D version
     glPushMatrix();
     glTranslated(loc.x, loc.y, loc.z);
     
@@ -176,20 +158,7 @@ void Boid::draw() {
     ofDrawSphere(100,100, r);
     sphere.setScale(1.f);
     
-//### 2D Solution
-//
-//      ofPushMatrix();
-//      ofTranslate(loc.x, loc.y, loc.z);
-//      ofRotateZ(heading2D);
-//      ofBeginShape();
-//      ofVertex(0, -r*2);
-//      ofVertex(-r, r*2);
-//      ofVertex(r, r*2);
-//      ofEndShape(true);
-//      ofPopMatrix();
-//      ofPopStyle();
-//      ofDisableAlphaBlending();
-//    
+   
 }
 
 
@@ -318,24 +287,5 @@ ofPoint Boid::cohesion(vector<Boid*> boids) {
     return sum;
 }
 
-//----------------------------------------------
-//      void Boid::followMouse(ofPoint target) {
-//          acc += steer(target, false);
-//      }
 
-//      void Boid::setTarget(ofPoint target){
-//          targetLoc =
-//      acc += steer(target, false);
-//      }
-//
-//  --------------------------------------------------------------
-//  CLICKABLE
-//  --------------------------------------------------------------
-//
-//      void Boid::mouseReleased(ofMouseEventArgs & args){
-//      // if the mouse is pressed over the circle an event will be notified (broadcasted)
-//      // the circleEvent object will contain the mouse position, so this values are accesible to any class that is listening.
-//          ofVec2f mousePos = ofVec2f(args.x, args.y);
-//          ofNotifyEvent(clickableEvent, mousePos, this);
-//      }
-//----------------------------------------------
+

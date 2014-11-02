@@ -62,10 +62,8 @@ public:
     //
     ofSpherePrimitive sphere;
     ofLight pointLight;
-//      Interaction
-//          ofEvent<ofVec3f> clickableEvent;
-//          static ofEvent<ofVec3f> clicableEvent;
-    ofPoint targetLoc;
+
+    //    ofPoint targetLoc;
     void setTarget(ofPoint target);
 
     boidsMode mode;
